@@ -21,7 +21,7 @@ namespace PracticeTask7
         {
             InitializeComponent();
         }
-        void Read_FromFile()
+        void Read_FromFile() // Чтение из файла
         {
             openFileDialog1 = new OpenFileDialog();
             openFileDialog1.Title = "Открытие текстового файла";
@@ -35,10 +35,10 @@ namespace PracticeTask7
             }
             if (filelines != null)
             {
-                if (filelines.Length == 1)
+                if (filelines.Length == 1) // Строка в файле одна
                 {
-                    Remove_Elements(case_input: 0);
-                    if (Check_Input(filelines[0]))
+                    Remove_Elements(case_input: 0); // Очищение формы
+                    if (Check_Input(filelines[0])) // Проверка корректного ввода
                     {
                         Input_Label.Text = "Вектор значений функции из файла:";
                         input_file_label = new Label()
@@ -51,28 +51,28 @@ namespace PracticeTask7
                             BackColor = Color.Transparent,
                             Font = Input_Label.Font
                         };
-                        Controls.Add(input_file_label);
-                        Check_Classes(filelines[0]);
+                        Controls.Add(input_file_label); // Вывод вектора на экран
+                        Check_Classes(filelines[0]); // Определение на принадлежность классам
                     }
                 }
                 else MessageBox.Show($"В файле содержится больше одной строки!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        bool Check_Input(string vector)
+        public bool Check_Input(string vector) // Проверка ввода
         {
             bool is_correct = true;
-            if (vector.All(ch => ch == '0' || ch == '1'))
+            if (vector.All(ch => ch == '0' || ch == '1')) // Вектор из нулей и единиц
             {
-                int count_of_variables = 0;
-                double sum_of_chars = vector.Length;
-                if (sum_of_chars > 0 && sum_of_chars <= 16)
+                int count_of_variables = 0; // Количество аргументов функции
+                double sum_of_chars = vector.Length; // Количество символов
+                if (sum_of_chars > 0 && sum_of_chars <= 16) // Длина вектора от 1 до 16
                 {
-                    while (sum_of_chars > 1)
+                    while (sum_of_chars > 1) // Пока количество символов больше 1
                     {
-                        sum_of_chars /= 2;
-                        count_of_variables++;
+                        sum_of_chars /= 2; // Делим пополам
+                        count_of_variables++; // Увеличиваем счетчик аргументов
                     }
-                    if (sum_of_chars != 1)
+                    if (sum_of_chars != 1) // Если не получено 1, то длина вектора не 2 в некоторой степени
                     {
                         is_correct = false;
                         MessageBox.Show("Вектор значений имеет некорректную длину!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -91,53 +91,54 @@ namespace PracticeTask7
             }
             return is_correct;
         }
-        bool T0(string vector)
+        bool T0(string vector) // Класс Т0
         {
-            return vector[0] == '0';
+            return vector[0] == '0'; // 0 на нулевом наборе
         }
-        bool T1(string vector)
+        bool T1(string vector) // Класс Т1
         {
-            return vector[vector.Length - 1] == '1';
+            return vector[vector.Length - 1] == '1'; // 1 на единичном наборе
         }
-        bool S(string vector)
+        bool S(string vector) // Класс S
         {
-            if (vector.Length > 1)
+            if (vector.Length > 1) // Длина вектора больше 1
             {
                 for(int i = 0; i < vector.Length / 2; i++)
                 {
-                    if (vector[i] == vector[vector.Length - 1 - i]) return false;
+                    if (vector[i] == vector[vector.Length - 1 - i]) return false; // Если одинаковые значения на противоположных концах, то не принадлежит S
                 }
                 return true;
             }
             else return false;
         }
-        bool L(string vector)
+        bool L(string vector) // Класс L
         {
-            string[] pascal_triangle_lines = new string[vector.Length];
-            string coeffs = string.Empty;
-            string multipl_coeffs = string.Empty;
+            string[] pascal_triangle_lines = new string[vector.Length]; // Линии треугольника Паскаля
+            string coeffs = string.Empty; // Коэффициенты полинома
+            string multipl_coeffs = string.Empty; // Коэффициенты при произведении аргументов
             bool is_linear = true;
             for (int i = 0; i < vector.Length && is_linear; i++)
             {
                 if (i == 0)
                 {
-                    pascal_triangle_lines[i] = vector;
-                    coeffs += vector[0];
+                    pascal_triangle_lines[i] = vector; // Первая строка треугольника равна вектору
+                    coeffs += vector[0]; // В коэффициенты записываем первое значение строки
                 }
                 else
                 {
                     for (int j = 0; j < pascal_triangle_lines[i - 1].Length - 1 && is_linear; j++)
                     {
-                        string mod_sum = (((int)Char.GetNumericValue(pascal_triangle_lines[i - 1][j]) + (int)Char.GetNumericValue(pascal_triangle_lines[i - 1][j + 1])) % 2).ToString();
-                        pascal_triangle_lines[i] += mod_sum;
-                        if (j == 0)
+                        string mod_sum = (((int)Char.GetNumericValue(pascal_triangle_lines[i - 1][j]) + 
+                            (int)Char.GetNumericValue(pascal_triangle_lines[i - 1][j + 1])) % 2).ToString(); // Вычисляем сумму по модулю 2
+                        pascal_triangle_lines[i] += mod_sum; // Добавляем ее в текущую строку треугольника
+                        if (j == 0) // Если это первое значение строки
                         {
-                            coeffs += mod_sum;
+                            coeffs += mod_sum; // Добавляем к коэффициентам
                             if (coeffs.Length > 1)
                             {
-                                if ((int)Math.Log(coeffs.Length - 1, 2) != Math.Log(coeffs.Length - 1, 2))
+                                if ((int)Math.Log(coeffs.Length - 1, 2) != Math.Log(coeffs.Length - 1, 2)) // Если коэффициент не при слагаемом полинома вида x1, x2... xn
                                 {
-                                    if (coeffs[coeffs.Length - 1] == '1') is_linear = false;
+                                    if (coeffs[coeffs.Length - 1] == '1') is_linear = false; // Если коэффициент равен 1, в полиноме есть произведение аргументов, функция нелинейна
                                     multipl_coeffs += coeffs[coeffs.Length - 1];
                                 }
                             }
@@ -147,53 +148,51 @@ namespace PracticeTask7
             }
             return is_linear;
         }
-        bool M(string vector)
+        bool M(string vector) // Класс М
         {
-            List<List<int>> vectors = new List<List<int>>();
-            List<int> pow_vector = new List<int>();
-            for (int i = 0; i < Math.Log(vector.Length, 2); i++)
+            List<List<int>> vectors = new List<List<int>>(); // Список из списков, где i-тый список содержит наборы, в которые можно попасть из i-того набора
+            for(int i = 0; i < vector.Length - 1; i++)
             {
-                pow_vector.Add((int)Math.Pow(2, i));
-            }
-            for (int i = 0; i < vector.Length; i++)
-            {
-                if (i == 0)
-                {
-                    vectors.Add(new List<int>());
-                    for (int j = 1; j < vector.Length; j++)
-                    {
-                        vectors[i].Add(j);
-                        vectors.Add(new List<int>());
-                    }
-                }
-                else if ((int)Math.Log(i, 2) == Math.Log(i, 2))
-                {
-                    for (int j = 0; j < pow_vector.Count; j++)
-                    {
-                        if (i != pow_vector[j])
-                        {
-                            int index = i + pow_vector[j];
-                            vectors[i].Add(index);
-                            vectors[index] = Check_Sum(index, pow_vector, ref vectors);
-                            vectors[i].AddRange(vectors[index]);
-                            vectors[i] = vectors[i].Distinct().ToList();
-                        }
-                    }
-                }
-
+                vectors.Add(new List<int>()); // Заполняем список
             }
             for (int i = 0; i < vector.Length - 1; i++)
             {
-                if (!monotonic(vector, vectors[i], i)) return false;
+                if (i == 0)
+                {
+                    for (int j = 0; j < Math.Log(vector.Length, 2); j++)
+                    {
+                        vectors[i].Add((int)Math.Pow(2, j)); // Из нулевого набора можно попасть в наборы, содержающие 1 единицу среди аргументов
+                    }
+                }
+                else if ((int)Math.Log(i, 2) == Math.Log(i, 2)) // Набор содержит 1 единицу
+                {
+                    for (int j = 0; j < vectors[0].Count; j++) // Перебираем все доступные числа вида 2 в некоторой степени
+                    {
+                        if (i != vectors[0][j])
+                        {
+                            int index = i + vectors[0][j];
+                            vectors[i].Add(index); // Записываем в список сумму индекса текущего набора и числа вида 2 в некоторой степени
+                        }
+                    }
+                }
+                else
+                {
+                    Check_Sum(i, ref vectors); // Находим наборы, в которые можно попасть, прибавив к текущему i еще неприбавленное число вида 2 в некоторой степени
+                }
+
+            }
+            for (int i = 0; i < vectors.Count; i++)
+            {
+                if (!Is_Monotonic(vector, vectors[i], i)) return false; // Проверка каждой цепи наборов на монотонность
             }
             return true;
         }
-        bool monotonic(string vector, List<int> i_vector, int index)
+        bool Is_Monotonic(string vector, List<int> i_vector, int index)
         {
             bool is_monotonic = true;
             for (int i = 0; i < i_vector.Count; i++)
             {
-                if (char.GetNumericValue(vector[index]) > char.GetNumericValue(vector[i_vector[i]]))
+                if (char.GetNumericValue(vector[index]) > char.GetNumericValue(vector[i_vector[i]])) // Если значение текущего набора больше, чем значение набора, в который можно попасть из текущего, то функция немонотонна
                 {
                     is_monotonic = false;
                     break;
@@ -201,27 +200,24 @@ namespace PracticeTask7
             }
             return is_monotonic;
         }
-        List<int> Check_Sum(int sum, List<int> zero_vector, ref List<List<int>> vectors)
+        void Check_Sum(int sum, ref List<List<int>> vectors)
         {
-            List<int> sum_indexes = new List<int>();
-            List<int> except_indexes = new List<int>();
-           for (int i = zero_vector.Count - 1; i >= 0; i--)
+            List<int> sum_indexes = new List<int>(); // Индексы, которые в сумме составляют sum
+            List<int> except_indexes = new List<int>(); // Индексы, которые не входят в sum
+            for (int i = vectors[0].Count - 1; i >= 0; i--)
             {
-                if (sum_indexes.Sum() + zero_vector[i] <= sum)
+                if (sum_indexes.Sum() + vectors[0][i] <= sum) // Сумма текущего числа и суммы sum_indexes не превосходит sum
                 {
-                    sum_indexes.Add(zero_vector[i]);
+                    sum_indexes.Add(vectors[0][i]); // Текущее число является слагаемым sum
                 }
                 else
                 {
-                    except_indexes.Add(sum + zero_vector[i]);
-                    vectors[sum].Add(sum + zero_vector[i]);
-                    vectors[sum].AddRange(Check_Sum(sum + zero_vector[i], zero_vector, ref vectors));
-                    vectors[sum] = vectors[sum].Distinct().ToList();
+                    except_indexes.Add(sum + vectors[0][i]);
+                    vectors[sum].Add(sum + vectors[0][i]); // Из набора sum можно попасть в набор sum + vectors[0][i]
                 }
             }
-            return except_indexes;
         }
-        void Check_Classes(string vector)
+        public void Check_Classes(string vector)
         {
             output_label = new Label()
             {
@@ -233,11 +229,11 @@ namespace PracticeTask7
                 BackColor = Color.Transparent,
                 Font = Input_Label.Font
             };
-            if (T0(vector)) output_label.Text += " T0";
-            if (T1(vector)) output_label.Text += " T1";
-            if (S(vector)) output_label.Text += " S";
-            if (L(vector)) output_label.Text += " L";
-            if (M(vector)) output_label.Text += " M";
+            if (T0(vector)) output_label.Text += " T0"; // Относится к Т0
+            if (T1(vector)) output_label.Text += " T1"; // Относится к Т1
+            if (S(vector)) output_label.Text += " S"; // Относится к S
+            if (L(vector)) output_label.Text += " L"; // Относится к L
+            if (M(vector)) output_label.Text += " M"; // Относится к M
             if (output_label.Text == "Функция относится к") output_label.Text = "Функция не относится ни к одному \n" + "из замкнутых классов";
             Controls.Add(output_label);
         }
@@ -258,18 +254,18 @@ namespace PracticeTask7
                 BackColor = Color.FromArgb(255, 245, 248),
                 Font = Input_Label.Font
             };
-            Controls.Add(input_user_textbox);
+            Controls.Add(input_user_textbox); // Добавление текстбокса для ввода вектора вручную
             input_user_textbox.KeyDown += new KeyEventHandler(Input_User_TextBox_KeyDown);
             input_user_textbox.Focus();
         }
         void Input_User_TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter) // Нажат энтер
             {
-                Remove_Output();
-                if (Check_Input((sender as TextBox).Text))
+                Remove_Output(); // Очистка результатов
+                if (Check_Input((sender as TextBox).Text)) // Корректный ввод
                 {
-                    Check_Classes((sender as TextBox).Text);
+                    Check_Classes((sender as TextBox).Text); // Проверка на принадлежность классам
                 }
             }
         }
@@ -278,32 +274,32 @@ namespace PracticeTask7
             Input_Label.Text = string.Empty;
             if (case_input == 0)
             {
-                Remove_User_Input();
+                Remove_User_Input(); // Удаление пользовательского ввода
             }
-            else Remove_File_Input();
-            Remove_Output();
+            else Remove_File_Input(); // Удаление ввода из файла
+            Remove_Output(); // Очистка результатов
         }
         void Remove_File_Input()
         {
-            if (input_file_label != null)
+            if (input_file_label != null) // Если еще не удалено
             {
-                Controls.Remove(input_file_label);
+                Controls.Remove(input_file_label); // Очистка
                 input_file_label = null;
             }
         }
         void Remove_User_Input()
         {
-            if (input_user_textbox != null)
+            if (input_user_textbox != null) // Если еще не удалено
             {
-                Controls.Remove(input_user_textbox);
+                Controls.Remove(input_user_textbox); // Очистка
                 input_user_textbox = null;
             }
         }
         void Remove_Output()
         {
-            if (output_label != null)
+            if (output_label != null) // Если еще не удалено
             {
-                Controls.Remove(output_label);
+                Controls.Remove(output_label); // Очистка
                 output_label = null;
             }
         }
